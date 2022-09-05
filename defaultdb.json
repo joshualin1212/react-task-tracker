@@ -1,0 +1,22 @@
+{
+  "tasks": [
+    {
+      "id": 1,
+      "text": "Wake up",
+      "day": "July 11th 8:00 AM",
+      "reminder": false
+    },
+    {
+      "id": 2,
+      "text": "Buy condoms",
+      "day": "July 11th 9:00 AM",
+      "reminder": true
+    },
+    {
+      "id": 3,
+      "text": "Nori",
+      "day": "July 11th 12:00 PM",
+      "reminder": true
+    }
+  ]
+}
