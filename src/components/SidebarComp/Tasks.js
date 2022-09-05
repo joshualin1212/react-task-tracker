@@ -1,8 +1,8 @@
 import Task from "./Task";
 
-const Tasks = ({ tasks, onDelete, onReminder, dragBegin, dragEnd}) => {
+const Tasks = ({ tasks, onDelete, onReminder, dragBegin, dragEnd, onDrop }) => {
   return (
-    <div className="tasks">
+    <div className="tasks" onDrop={(e) => onDrop(e, "#time-")}>
       {tasks.map((task) => {
         return (
           <Task
@@ -12,6 +12,7 @@ const Tasks = ({ tasks, onDelete, onReminder, dragBegin, dragEnd}) => {
             onReminder={onReminder}
             dragBegin={dragBegin}
             dragEnd={dragEnd}
+            onDrop={onDrop}
           />
         );
       })}

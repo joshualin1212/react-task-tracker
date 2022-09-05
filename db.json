@@ -16,54 +16,11 @@
     },
     {
       "id": 3,
-      "text": "Nori",
+      "text": "Take Nori out on a date",
       "day": "July 11th 12:00 PM",
       "duration": 69,
       "reminder": true
     }
   ],
-  "dayPlanTasks": [
-    {
-      "id": 1,
-      "text": "Wake up, cook eggs",
-      "duration": 10,
-      "startTime": 605,
-      "endTime": 615,
-      "reminder": false
-    },
-    {
-      "id": 2,
-      "text": "go to cooking class",
-      "duration": 120,
-      "startTime": 1015,
-      "endTime": 1215,
-      "reminder": true
-    },
-    {
-      "id": 3,
-      "text": "Take Nori out on a date",
-      "duration": 69,
-      "startTime": 1705,
-      "endTime": 1915,
-      "reminder": true
-    },
-    {
-      "id": 4,
-      "text": "Buy condoms",
-      "duration": 120,
-      "day": "July 11th 9:00 AM",
-      "reminder": true,
-      "startTime": 645,
-      "endTime": 845
-    },
-    {
-      "id": 5,
-      "text": "Buy condoms",
-      "duration": 120,
-      "day": "July 11th 9:00 AM",
-      "reminder": true,
-      "startTime": 245,
-      "endTime": 445
-    }
-  ]
+  "dayPlanTasks": []
 }

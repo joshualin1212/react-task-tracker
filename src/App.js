@@ -28,7 +28,7 @@ import { FaListAlt } from "react-icons/fa";
 function App() {
   const [showAddTask, setShowAddTask] = useState(false);
   const [tasks, setTasks] = useState([]);
-  const [dayPlanTasks, setdayPlanTasks] = useState([]);
+  const [dayPlanTasks, setDayPlanTasks] = useState([]);
   const [mouseTask, setMouseTask] = useState({});
 
   useEffect(() => {
@@ -37,10 +37,9 @@ function App() {
       setTasks(tasksFromServer);
     };
     getTasks();
-
     const getPlanTasks = async () => {
       const tasksFromServer = await fetchPlanTasks();
-      setdayPlanTasks(tasksFromServer);
+      setDayPlanTasks(tasksFromServer);
     };
     getPlanTasks();
   }, []);
@@ -77,6 +76,15 @@ function App() {
     console.log("delete", id);
   };
 
+  // delete task from the planner on the right
+  const deleteDayPlanTask = async (id) => {
+    await fetch(`http://localhost:5000/dayPlanTasks/${id}`, {
+      method: "DELETE",
+    });
+    setDayPlanTasks(dayPlanTasks.filter((task) => task.id !== id));
+    console.log("delete", id);
+  };
+
   // Toggle remimnder
   const toggleReminder = (id) => {
     console.log(tasks.id);
@@ -109,34 +117,91 @@ function App() {
       body: JSON.stringify(dayPlanTask),
     });
     const newDayTask = await res.json();
-    setdayPlanTasks([...dayPlanTasks, newDayTask]);
-    console.log(dayPlanTasks);
+    setDayPlanTasks([...dayPlanTasks, newDayTask]);
+    console.log(dayPlanTasks, "task added");
   };
 
+  //util- converts a duration (minutes only) so that it in the format of {00}{00}{hour}{minute} stored in a single number
   function convertToCustomUnit(duration) {
     let hours = 100 * Math.floor(duration / 60);
     let minutes = duration % 60;
     return hours + minutes;
   }
 
+  //util- checks if the start time + duration overlaps with anything in our dayPlanTasks
+  function isTimeOverlap(dropStartTime, duration) {
+    let ret = false;
+    //time is in format {00}{00} => {hour}{minutes}
+    dayPlanTasks.map((dayPlanTask) => {
+      // console.log(
+      //   dropStartTime,
+      //   duration,
+      //   convertToCustomUnit(parseInt(duration)),
+      //   dropStartTime + convertToCustomUnit(parseInt(duration))
+      // );
+      // console.log(dayPlanTask.startTime, dayPlanTask.endTime);
+      if (
+        dropStartTime < dayPlanTask.startTime &&
+        dayPlanTask.startTime <=
+          dropStartTime + convertToCustomUnit(parseInt(duration))
+      ) {
+        ret = true;
+      }
+    });
+    return ret;
+  }
+
   const onDrop = (e, element) => {
     e.preventDefault();
     const dropLocation = document.querySelector(element);
     console.log(document.querySelector(element));
+
+    // TRANSFERING FROM LEFT TO RIGHT
     if (e.dataTransfer.types.includes("task")) {
-      e.preventDefault();
       const dataString = e.dataTransfer.getData("task");
       const data = JSON.parse(dataString);
-      const time = dropLocation.id.substring(5); //this will get the time using the ID
-      // console.log(time);
-      const newDayTask = {
-        ...data,
+      const dropStartTime = dropLocation.id.substring(5); //this will get the time using the ID
+      // console.log(dropStartTime);
+
+      console.log(
+        isTimeOverlap(parseInt(dropStartTime), parseInt(data.duration)),
+        "hello"
+      );
+
+      if (isTimeOverlap(parseInt(dropStartTime), parseInt(data.duration))) {
+        //overlap, do not add into db
+        alert("Action cannot be done. There is an overlap of time!");
+      } else {
+        // no overlap, safe to put into the db
+
+        const newDayTask = {
+          ...data,
+          id: "",
+          startTime: parseInt(dropStartTime),
+          endTime:
+            Math.floor(parseInt(dropStartTime) / 100) * 100 +
+            convertToCustomUnit(
+              (parseInt(dropStartTime) % 100) + parseInt(data.duration)
+            ),
+        };
+        // console.log(newDayTask);
+        addDayPlannerTask(newDayTask);
+      }
+    }
+
+    // TRANSFER FROM RIGHT TO LEFT
+    else if (e.dataTransfer.types.includes("plantask")) {
+      const dataString = e.dataTransfer.getData("plantask");
+      const data = JSON.parse(dataString);
+
+      let { startTime, endTime, ...cleaned } = data; //this syntax will take out the object properties we want to omit when transfering the data over to the left side.
+
+      const newTask = {
+        ...cleaned,
         id: "",
-        startTime: parseInt(time),
-        endTime: parseInt(time) + convertToCustomUnit(parseInt(data.duration)),
       };
-      // console.log(newDayTask);
-      addDayPlannerTask(newDayTask); //TURN THIS BACK ON LATER
+      // console.log(newTask);
+      addTask(newTask);
     }
   };
 
@@ -170,9 +235,16 @@ function App() {
           dragBegin={dragBegin}
           dragEnd={dragEnd}
           hideMenu={hideMenu}
+          onDrop={onDrop}
         />
 
-        <Planner onDrop={onDrop} dayPlanTasks={dayPlanTasks} />
+        <Planner
+          onDrop={onDrop}
+          dayPlanTasks={dayPlanTasks}
+          onDragBegin={dragBegin}
+          onDragEnd={dragEnd}
+          deleteDayPlanTask={deleteDayPlanTask}
+        />
       </div>
     </div>
   );

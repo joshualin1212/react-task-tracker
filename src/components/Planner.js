@@ -33,7 +33,8 @@ function timeInsideTasks(hour, minute, dayPlanTasks) {
     if (
       parseInt(hour) * 100 + parseInt(minute) >= item.startTime &&
       parseInt(hour) * 100 + parseInt(minute) <
-        item.startTime + convertToCustomUnit(item.duration) // TODO: THIS LOGIC NEEDS TO BE CONVERTED FROM 100 (number counting) -> :60 (time counting)
+        Math.floor(parseInt(item.startTime) / 100) * 100 +
+          convertToCustomUnit((item.startTime % 100) + item.duration) // TODO: THIS LOGIC NEEDS TO BE CONVERTED FROM 100 (number counting) -> :60 (time counting)
     ) {
       // console.log("this block is occupied by a task at time-", hour, minute);
       ret = item;
@@ -42,29 +43,23 @@ function timeInsideTasks(hour, minute, dayPlanTasks) {
   return ret;
 }
 
-const Planner = ({ onDrop, dayPlanTasks }) => {
+const Planner = ({
+  onDrop,
+  dayPlanTasks,
+  onDragStart,
+  onDragEnd,
+  deleteDayPlanTask,
+}) => {
   /*
     Use the list of dayPlanTasks to set up layout.
     - For every dayPlanTask in dayPlanTask, search up start time and duration and set up block size accordingly by using CSS grid-span (every 5 min is 1 span).
     - In each other block, we have an empty block. 
     - (Implementation: In each iteration through the minute blocks, we need to skip out on adding empty blocks until the end time of the task. The number of blocks will always need to have a total of 24*6 grid spans.)
   */
-  let blocks = [];
-  times.forEach(function (hour, indexh) {
-    division.forEach(function (minute, indexm) {
-      // console.log(timeInsideTasks(hour, minute, dayPlanTasks));
-
-      if (timeInsideTasks(hour, minute, dayPlanTasks)) {
-      } else {
-        blocks.push(hour + "" + minute);
-      }
-    });
-  });
-  // the above part is just useless.
 
   return (
     <div className="planner container">
-      <h1 className="header"> Calendar </h1>
+      <h1 className="header"> Timeline </h1>
       <div className="grid">
         {/* hour label */}
         {times.map((hour) => (
@@ -92,7 +87,10 @@ const Planner = ({ onDrop, dayPlanTasks }) => {
               hour={hour}
               minute={minute}
               onDrop={onDrop}
+              onDragEnd={onDragEnd}
+              onDragStart={onDragStart}
               dayPlanTask={timeInsideTasks(hour, minute, dayPlanTasks)}
+              onDelete={deleteDayPlanTask}
             />
           ))
         )}

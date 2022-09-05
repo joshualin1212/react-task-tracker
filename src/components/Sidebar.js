@@ -12,6 +12,7 @@ const Sidebar = ({
   dragBegin,
   dragEnd,
   hideMenu,
+  onDrop
 }) => {
   return (
     <div id="TaskApp" className="container">
@@ -30,6 +31,7 @@ const Sidebar = ({
           onReminder={onReminder}
           dragBegin={dragBegin}
           dragEnd={dragEnd}
+          onDrop={onDrop}
         />
       ) : (
         "no tasks to show"
