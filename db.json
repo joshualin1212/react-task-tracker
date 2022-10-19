@@ -3,24 +3,43 @@
     {
       "id": 1,
       "text": "Wake up",
-      "day": "July 11th 8:00 AM",
+      "day": "8:00 AM",
       "duration": 10,
       "reminder": false
     },
     {
       "id": 2,
-      "text": "Buy condoms",
+      "text": "Buy groceries",
       "duration": 120,
-      "day": "July 11th 9:00 AM",
+      "day": "9:00 AM",
       "reminder": true
     },
     {
       "id": 3,
-      "text": "Take Nori out on a date",
-      "day": "July 11th 12:00 PM",
-      "duration": 69,
+      "text": "feed the family v.v",
+      "day": "12:00 PM",
+      "duration": 70,
       "reminder": true
     }
   ],
-  "dayPlanTasks": []
+  "dayPlanTasks": [
+    {
+      "id": 1,
+      "text": "Wake up",
+      "day": "8:00 AM",
+      "duration": 10,
+      "reminder": false,
+      "startTime": 615,
+      "endTime": 625
+    },
+    {
+      "id": 2,
+      "text": "feed the family :(",
+      "day": " 12:00 PM",
+      "duration": 70,
+      "reminder": true,
+      "startTime": 945,
+      "endTime": 1054
+    }
+  ]
 }
